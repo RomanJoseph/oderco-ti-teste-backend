@@ -1,4 +1,4 @@
-export interface CreateProductResponse {
+export type ListProductsResponse = {
     id: string;
     name: string;
     price: number;
