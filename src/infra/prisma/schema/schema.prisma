@@ -14,7 +14,7 @@ enum StockMovmentType {
 
 model Category {
   id              String            @id @default(uuid())
-  name            String
+  name            String            @unique()
   createdAt       DateTime          @default(now())
   products        Product[]
 }

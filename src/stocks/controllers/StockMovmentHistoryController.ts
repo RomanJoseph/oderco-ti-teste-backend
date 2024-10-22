@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CreateStockMovmentHistoryService } from '../services/CreateStockMovmentHistoryService';
 import { CreateStockMovementHistoryRequest } from './request/CreateStockMovementHistoryRequest';
 import { CreateStockMovementHistoryResponse } from './response/CreateStockMovementHistoryResponse';
@@ -14,7 +14,7 @@ export class StockMovmentHistoryController {
   ) {}
 
   @Get('/')
-  public async getActualStock(@Param('categoryId') categoryId: string) {
+  public async getActualStock(@Query('categoryId') categoryId?: string) {
     return this.getActualStockService.execute({ categoryId });;
   }
 

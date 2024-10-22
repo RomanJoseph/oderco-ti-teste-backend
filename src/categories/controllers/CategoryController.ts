@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { CreateCategoryService } from '../services/CreateCategoryService';
-import { CreateCategoryRequest } from './request/CreateCategoryRequest';
 import { ListCategoriesService } from '../services/ListCategoriesService';
+import { CreateCategoryRequest } from './request/CreateCategoryRequest';
 import { CreateCategoryResponse } from './response/CreateCategoryResponse';
 import { ListCategoriesResponse } from './response/ListCategoriesResponse';
 
@@ -20,7 +20,9 @@ export class CategoriesController {
   }
 
   @Get()
-  public async listCategories(): Promise<ListCategoriesResponse> {
-    return this.listCategoriesService.execute();
+  public async listCategories(
+    @Query('name') name?: string,
+  ): Promise<ListCategoriesResponse> {
+    return this.listCategoriesService.execute({ name });
   }
 }

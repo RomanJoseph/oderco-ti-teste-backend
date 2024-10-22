@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
 import { CreateProductDTO } from 'src/products/dtos/CreateProductDTO';
 import { ProductDTO } from 'src/products/dtos/ProductDTO';
@@ -7,8 +8,13 @@ import { ProductDTO } from 'src/products/dtos/ProductDTO';
 export class ProductRepository {
   constructor(private readonly prisma: PrismaProvider) {}
 
-  public async create(dto: CreateProductDTO): Promise<ProductDTO> {
-    return this.prisma.product.create({
+  public async create(
+    dto: CreateProductDTO,
+    prismaTransaction?: Prisma.TransactionClient,
+  ): Promise<ProductDTO> {
+    const prismaClient = prismaTransaction || this.prisma;
+
+    return prismaClient.product.create({
       data: {
         name: dto.name,
         price: dto.price,
@@ -30,14 +36,20 @@ export class ProductRepository {
     });
   }
 
-  public async findAll() {
+  public async findAll(
+    categoryId?: string,
+    name?: string,
+  ): Promise<ProductDTO[]> {
     return this.prisma.product.findMany({
+      where: {
+        ...(categoryId ? { categories: { some: { id: categoryId } } } : {}),
+        ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
+      },
       include: {
         categories: true,
       },
     });
   }
-
   public async update(
     id: string,
     data: Partial<CreateProductDTO>,

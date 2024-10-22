@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateProductService } from '../services/CreateProductService';
 import { CreateProductRequest } from './request/CreateProductRequest';
 import { CreateProductResponse } from './response/CreateProductResponse';
@@ -22,8 +22,14 @@ export class ProductsController {
   }
 
   @Get()
-  async list(): Promise<any> {
-    return this.listProductsService.execute();
+  async list(
+    @Query('name') name?: string,
+    @Query('categoryId') categoryId?: string,
+  ): Promise<any> {
+    return this.listProductsService.execute({
+      name,
+      categoryId,
+    });
   }
 
   @Put('/:id')

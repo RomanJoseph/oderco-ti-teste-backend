@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client'; // Importando para o tipo de transação
 import { ProductRepository } from '../infra/repositories/ProductRepository';
 import { StockMovmentHistoryRepository } from 'src/stocks/infra/repositories/StockMovmentHistoryRepository';
+import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
 
 export type CreateProductCommand = {
   name: string;
@@ -13,29 +15,40 @@ export type CreateProductCommand = {
 export class CreateProductService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly stockMovmentHistoryRepository: StockMovmentHistoryRepository
+    private readonly stockMovmentHistoryRepository: StockMovmentHistoryRepository,
+    private readonly prisma: PrismaProvider,
   ) {}
 
   public async execute(command: CreateProductCommand) {
-    const products = await this.productRepository.create({
-      name: command.name,
-      price: command.price,
-      categoryIds: command.categories,
+    return this.prisma.$transaction(async (tx) => {
+      // Criando o produto dentro da transação
+      const product = await this.productRepository.create(
+        {
+          name: command.name,
+          price: command.price,
+          categoryIds: command.categories,
+        },
+        tx, // Passando a transação para o repositório
+      );
+
+      // Criando o histórico de movimentação de estoque dentro da transação
+      await this.stockMovmentHistoryRepository.create(
+        {
+          productId: product.id,
+          quantity: command.quantity,
+          type: 'ENTRY',
+          description: 'New product registered',
+          date: new Date(),
+        },
+        tx,
+      );
+
+      return {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        categories: command.categories,
+      };
     });
-
-    await this.stockMovmentHistoryRepository.create({
-      productId: products.id,
-      quantity: command.quantity,
-      type: 'ENTRY',
-      description: 'New product registered',
-      date: new Date(),
-    })
-
-    return {
-      id: products.id,
-      name: products.name,
-      price: products.price,
-      categories: command.categories,
-    };
   }
 }

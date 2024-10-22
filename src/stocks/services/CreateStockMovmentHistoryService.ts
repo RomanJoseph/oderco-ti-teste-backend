@@ -15,12 +15,23 @@ export class CreateStockMovmentHistoryService {
   ) {}
 
   public async execute(command: CreateStockMovmentHistoryCommand) {
-    return this.stockMovmentHistoryRepository.create({
-      productId: command.productId,
-      type: command.type,
-      quantity: command.quantity,
-      description: command.description,
-      date: new Date(),
-    });
+    const actualStockQuantity =
+      await this.stockMovmentHistoryRepository.getActualStockQuantityByProductId(
+        command.productId,
+      );
+
+    const canCreateStockMovmentHistory = (command.type === 'EXIT' && actualStockQuantity >= command.quantity) || command.type === 'ENTRY';
+
+    if (canCreateStockMovmentHistory) {
+      return this.stockMovmentHistoryRepository.create({
+        productId: command.productId,
+        type: command.type,
+        quantity: command.quantity,
+        description: command.description,
+        date: new Date(),
+      });
+    };
+
+    throw new Error('Invalid stock movement!');
   }
 }
