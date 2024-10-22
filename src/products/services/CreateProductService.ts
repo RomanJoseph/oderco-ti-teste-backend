@@ -21,17 +21,15 @@ export class CreateProductService {
 
   public async execute(command: CreateProductCommand) {
     return this.prisma.$transaction(async (tx) => {
-      // Criando o produto dentro da transação
       const product = await this.productRepository.create(
         {
           name: command.name,
           price: command.price,
           categoryIds: command.categories,
         },
-        tx, // Passando a transação para o repositório
+        tx,
       );
 
-      // Criando o histórico de movimentação de estoque dentro da transação
       await this.stockMovmentHistoryRepository.create(
         {
           productId: product.id,

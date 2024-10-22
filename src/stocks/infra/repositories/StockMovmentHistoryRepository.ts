@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Category, Prisma, Product, StockMovmentHistory } from '@prisma/client';
 import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
 import { CreateStockMovementHistoryDTO } from 'src/stocks/dto/CreateStockMovementHistoryDTO';
-import { StockMovementHistoryDTO } from 'src/stocks/dto/StockMovementHistoryDTO';
+
+export type StockMovementHistoryWithProductAndCategories = StockMovmentHistory & {
+  product: Product & { categories: Category[] };
+}
 
 @Injectable()
 export class StockMovmentHistoryRepository {
@@ -11,13 +14,13 @@ export class StockMovmentHistoryRepository {
   public async create(
     data: CreateStockMovementHistoryDTO,
     prismaTransaction?: Prisma.TransactionClient
-  ): Promise<StockMovementHistoryDTO> {
+  ): Promise<StockMovmentHistory> {
     const prismaClient = prismaTransaction || this.prisma;
 
     return prismaClient.stockMovmentHistory.create({ data });
   }
 
-  public async findAll(): Promise<StockMovementHistoryDTO[]> {
+  public async findAll(): Promise<StockMovementHistoryWithProductAndCategories[]> {
     return this.prisma.stockMovmentHistory.findMany({
       include: { product: { include: { categories: true } } },
     });
@@ -25,7 +28,7 @@ export class StockMovmentHistoryRepository {
 
   public async findByCategoryId(
     categoryId: string,
-  ): Promise<StockMovementHistoryDTO[]> {
+  ): Promise<StockMovementHistoryWithProductAndCategories[]> {
     return this.prisma.stockMovmentHistory.findMany({
       where: { product: { categories: { some: { id: categoryId } } } },
       include: { product: { include: { categories: true } } },
@@ -37,7 +40,7 @@ export class StockMovmentHistoryRepository {
       where: { productId },
     });
 
-    return stockChangeHistory.reduce((acc, stock) => {
+    return stockChangeHistory.reduce((acc: number, stock: StockMovementHistoryWithProductAndCategories) => {
       return acc + (stock.type === 'ENTRY' ? stock.quantity : -stock.quantity);
     }, 0);
   }

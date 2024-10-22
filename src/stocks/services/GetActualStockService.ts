@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryDTO } from 'src/categories/dtos/CategoryDTO';
-import { StockMovementHistoryDTO } from '../dto/StockMovementHistoryDTO';
-import { StockMovmentHistoryRepository } from '../infra/repositories/StockMovmentHistoryRepository';
+import { StockMovementHistoryWithProductAndCategories, StockMovmentHistoryRepository } from '../infra/repositories/StockMovmentHistoryRepository';
 
 type GetActualStockServiceCommand = {
   categoryId?: string;
@@ -31,11 +30,11 @@ export class GetActualStockService {
   }
 
   private calculateStock(
-    stockChangeHistory: StockMovementHistoryDTO[],
+    stockChangeHistory: StockMovementHistoryWithProductAndCategories[],
   ): GetActualStockServiceResponse {
     const productStockMap = stockChangeHistory.reduce(
       (acc, stock) => {
-        const productName = stock.product?.name || 'Unknown product';
+        const productName = stock.product.name || 'Unknown product';
         const productCategories =
           stock.product?.categories?.map(
             (category: CategoryDTO) => category.id,

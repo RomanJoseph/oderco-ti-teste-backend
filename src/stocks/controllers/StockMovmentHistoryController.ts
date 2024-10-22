@@ -13,7 +13,7 @@ import {
   ApiResponse,
   ApiQuery,
   ApiBody,
-} from '@nestjs/swagger'; // Importe os decoradores do Swagger
+} from '@nestjs/swagger';
 import { CreateStockMovmentHistoryService } from '../services/CreateStockMovmentHistoryService';
 import { CreateStockMovementHistoryRequest } from './request/CreateStockMovementHistoryRequest';
 import { CreateStockMovementHistoryResponse } from './response/CreateStockMovementHistoryResponse';
