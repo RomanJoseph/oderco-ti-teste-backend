@@ -7,12 +7,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { CreateCategoryService } from '../services/CreateCategoryService';
 import { ListCategoriesService } from '../services/ListCategoriesService';
 import { CreateCategoryRequest } from './request/CreateCategoryRequest';
 import { CreateCategoryResponse } from './response/CreateCategoryResponse';
 import { ListCategoriesResponse } from './response/ListCategoriesResponse';
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(
@@ -20,6 +22,10 @@ export class CategoriesController {
     private readonly listCategoriesService: ListCategoriesService,
   ) {}
 
+  @ApiOperation({ summary: 'Create a new category' })
+  @ApiResponse({ status: 201, description: 'Category created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  // @ApiBody({ type: CreateCategoryRequest })
   @Post()
   public async createCategory(
     @Body() body: CreateCategoryRequest,
@@ -34,6 +40,10 @@ export class CategoriesController {
     }
   }
 
+  @ApiOperation({ summary: 'Get a list of categories' })
+  @ApiResponse({ status: 200, description: 'List of categories fetched successfully.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @ApiQuery({ name: 'name', required: false, description: 'Filter by category name' })
   @Get()
   public async listCategories(
     @Query('name') name?: string,

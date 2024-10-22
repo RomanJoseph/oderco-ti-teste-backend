@@ -10,14 +10,22 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { CreateProductService } from '../services/CreateProductService';
 import { CreateProductRequest } from './request/CreateProductRequest';
 import { CreateProductResponse } from './response/CreateProductResponse';
 import { ListProductsService } from '../services/ListProductsService';
 import { UpdateProductService } from '../services/UpdateProductService';
-import { ListProductsResponse } from './response/ListProductsResponse';
 import { DeleteProductService } from '../services/DeleteProductService';
 
+@ApiTags('products') // Agrupando as rotas do produto
 @Controller('/products')
 export class ProductsController {
   constructor(
@@ -27,6 +35,13 @@ export class ProductsController {
     private readonly deleteProductService: DeleteProductService,
   ) {}
 
+  @ApiOperation({ summary: 'Create a new product' })
+  @ApiResponse({ status: 201, description: 'Product created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiBody({
+    type: CreateProductRequest,
+    description: 'Product data',
+  })
   @Post()
   async create(
     @Body() body: CreateProductRequest,
@@ -41,6 +56,22 @@ export class ProductsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get a list of products' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of products fetched successfully.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Filter by product name',
+  })
+  @ApiQuery({
+    name: 'categoryId',
+    required: false,
+    description: 'Filter by category ID',
+  })
   @Get()
   async list(
     @Query('name') name?: string,
@@ -59,6 +90,14 @@ export class ProductsController {
     }
   }
 
+  @ApiOperation({ summary: 'Update an existing product' })
+  @ApiResponse({ status: 200, description: 'Product updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiParam({ name: 'id', description: 'Product ID' })
+  @ApiBody({
+    // type: CreateProductRequest,
+    description: 'Partial product data for update',
+  })
   @Put('/:id')
   async update(
     @Param('id') id: string,
@@ -81,6 +120,10 @@ export class ProductsController {
     }
   }
 
+  @ApiOperation({ summary: 'Delete a product' })
+  @ApiResponse({ status: 200, description: 'Product deleted successfully.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @ApiParam({ name: 'id', description: 'Product ID' })
   @Delete('/:id')
   async delete(@Param('id') id: string): Promise<void> {
     try {

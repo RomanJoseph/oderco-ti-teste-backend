@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, HttpException, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, HttpException, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger'; // Importe os decoradores do Swagger
 import { CreateStockMovmentHistoryService } from '../services/CreateStockMovmentHistoryService';
 import { CreateStockMovementHistoryRequest } from './request/CreateStockMovementHistoryRequest';
 import { CreateStockMovementHistoryResponse } from './response/CreateStockMovementHistoryResponse';
 import { GetStockMovementHistoryService } from '../services/GetStockMovementsHistoryService';
 import { GetActualStockService } from '../services/GetActualStockService';
 
+@ApiTags('stocks')
 @Controller('/stocks')
 export class StockMovmentHistoryController {
   constructor(
@@ -13,6 +15,9 @@ export class StockMovmentHistoryController {
     private readonly getActualStockService: GetActualStockService,
   ) {}
 
+  @ApiOperation({ summary: 'Get actual stock' })
+  @ApiResponse({ status: 200, description: 'Stock fetched successfully.' })
+  @ApiQuery({ name: 'categoryId', required: false, description: 'Category ID to filter stocks' })
   @Get('/')
   public async getActualStock(@Query('categoryId') categoryId?: string) {
     try {
@@ -25,6 +30,9 @@ export class StockMovmentHistoryController {
     }
   }
 
+  @ApiOperation({ summary: 'Create a stock movement' })
+  @ApiResponse({ status: 201, description: 'Stock movement created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Post('/movements')
   public async create(
     @Body() body: CreateStockMovementHistoryRequest,
@@ -39,6 +47,8 @@ export class StockMovmentHistoryController {
     }
   }
 
+  @ApiOperation({ summary: 'Get all stock movements' })
+  @ApiResponse({ status: 200, description: 'List of stock movements fetched successfully.' })
   @Get('/movements')
   public async findAll() {
     try {
