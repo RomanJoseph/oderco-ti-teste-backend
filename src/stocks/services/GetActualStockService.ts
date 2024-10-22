@@ -34,7 +34,7 @@ export class GetActualStockService {
   ): GetActualStockServiceResponse {
     const productStockMap = stockChangeHistory.reduce(
       (acc, stock) => {
-        const productName = stock.product.name || 'Unknown product';
+        const productName = stock.product.name
         const productCategories =
           stock.product?.categories?.map(
             (category: CategoryDTO) => category.id,
