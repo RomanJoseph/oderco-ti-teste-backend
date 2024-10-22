@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateProductResponse {
-  @ApiProperty({ description: 'Product ID' })
-  id: string;
-
+export class UpdateProductRequest {
   @ApiProperty({ description: 'Product name' })
   name: string;
 

@@ -8,7 +8,7 @@ type GetActualStockServiceCommand = {
 };
 
 type GetActualStockServiceResponse = {
-  products: { name: string; currentStock: number; categories?: string[] }[];
+  products: { name: string; currentStock: number; categories: string[] }[];
   totalQuantity: number;
 };
 

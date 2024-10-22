@@ -24,8 +24,10 @@ import { CreateProductResponse } from './response/CreateProductResponse';
 import { ListProductsService } from '../services/ListProductsService';
 import { UpdateProductService } from '../services/UpdateProductService';
 import { DeleteProductService } from '../services/DeleteProductService';
+import { ListProductsResponse } from './response/ListProductsResponse';
+import { UpdateProductRequest } from './request/UpdateProductRequest';
 
-@ApiTags('products') // Agrupando as rotas do produto
+@ApiTags('products')
 @Controller('/products')
 export class ProductsController {
   constructor(
@@ -36,7 +38,11 @@ export class ProductsController {
   ) {}
 
   @ApiOperation({ summary: 'Create a new product' })
-  @ApiResponse({ status: 201, description: 'Product created successfully.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Product created successfully.',
+    type: CreateProductResponse,
+  })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiBody({
     type: CreateProductRequest,
@@ -47,7 +53,7 @@ export class ProductsController {
     @Body() body: CreateProductRequest,
   ): Promise<CreateProductResponse> {
     try {
-      return await this.createProductService.execute(body);
+      return this.createProductService.execute(body);
     } catch (error) {
       throw new HttpException(
         'Error creating product: ' + (error.message || 'Unknown error'),
@@ -60,8 +66,12 @@ export class ProductsController {
   @ApiResponse({
     status: 200,
     description: 'List of products fetched successfully.',
+    type: Array<ListProductsResponse>,
   })
-  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal Server Error.',
+  })
   @ApiQuery({
     name: 'name',
     required: false,
@@ -76,9 +86,9 @@ export class ProductsController {
   async list(
     @Query('name') name?: string,
     @Query('categoryId') categoryId?: string,
-  ): Promise<any> {
+  ): Promise<ListProductsResponse[]> {
     try {
-      return await this.listProductsService.execute({
+      return this.listProductsService.execute({
         name,
         categoryId,
       });
@@ -95,16 +105,16 @@ export class ProductsController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiBody({
-    // type: CreateProductRequest,
+    type: UpdateProductRequest,
     description: 'Partial product data for update',
   })
   @Put('/:id')
   async update(
     @Param('id') id: string,
-    @Body() body: Partial<CreateProductRequest>,
+    @Body() body: UpdateProductRequest,
   ): Promise<any> {
     try {
-      return await this.updateProductService.execute({
+      return this.updateProductService.execute({
         id,
         data: {
           name: body.name,
@@ -121,13 +131,13 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
-  @ApiResponse({ status: 200, description: 'Product deleted successfully.' })
+  @ApiResponse({ status: 204, description: 'Product deleted successfully.' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @Delete('/:id')
   async delete(@Param('id') id: string): Promise<void> {
     try {
-      return await this.deleteProductService.execute(id);
+      return this.deleteProductService.execute(id);
     } catch (error) {
       throw new HttpException(
         'Error deleting product: ' + (error.message || 'Unknown error'),

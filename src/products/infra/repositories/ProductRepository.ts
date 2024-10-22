@@ -32,6 +32,7 @@ export class ProductRepository {
     return this.prisma.product.findUnique({
       where: {
         id,
+        deletedAt: null,
       },
     });
   }
