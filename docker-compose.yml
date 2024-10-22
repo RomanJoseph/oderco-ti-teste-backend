@@ -13,7 +13,7 @@ services:
 
   app:
     build: .
-    command: sh -c "yarn migrate && yarn start:prod"
+    command: sh -c "yarn migrate && yarn build &&yarn start:prod"
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
