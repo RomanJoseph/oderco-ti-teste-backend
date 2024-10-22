@@ -42,6 +42,7 @@ export class ProductRepository {
   ): Promise<ProductDTO[]> {
     return this.prisma.product.findMany({
       where: {
+        deletedAt: null,
         ...(categoryId ? { categories: { some: { id: categoryId } } } : {}),
         ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
       },
@@ -72,6 +73,17 @@ export class ProductRepository {
         categories: {
           set: categoryIds.map((categoryId) => ({ id: categoryId })),
         },
+      },
+    });
+  }
+
+  public async softDelete(id: string): Promise<void> {
+    await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }

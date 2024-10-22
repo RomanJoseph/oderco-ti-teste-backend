@@ -32,6 +32,6 @@ export class CreateStockMovmentHistoryService {
       });
     };
 
-    throw new Error('Invalid stock movement!');
+    throw new Error('Invalid stock movement! You cannot exit more than you have!');
   }
 }

@@ -6,6 +6,7 @@ import { ListProductsService } from 'src/products/services/ListProductsService';
 import { ProductsController } from 'src/products/controllers/ProductsController';
 import { UpdateProductService } from 'src/products/services/UpdateProductService';
 import { StockMovmentHistoryRepository } from 'src/stocks/infra/repositories/StockMovmentHistoryRepository';
+import { DeleteProductService } from 'src/products/services/DeleteProductService';
 
 @Module({
   imports: [PrismaModule],
@@ -14,6 +15,7 @@ import { StockMovmentHistoryRepository } from 'src/stocks/infra/repositories/Sto
     ProductRepository,
     CreateProductService,
     ListProductsService,
+    DeleteProductService,
     StockMovmentHistoryRepository,
     UpdateProductService
   ],

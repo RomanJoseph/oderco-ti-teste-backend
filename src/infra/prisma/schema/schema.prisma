@@ -23,6 +23,7 @@ model Product {
   id              String            @id @default(uuid())
   name            String            @unique()
   price           Float
+  deletedAt       DateTime?
 
   categories      Category[]
   stockMovments   StockMovmentHistory[]

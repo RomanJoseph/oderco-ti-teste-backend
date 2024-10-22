@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateCategoryService } from '../services/CreateCategoryService';
 import { ListCategoriesService } from '../services/ListCategoriesService';
 import { CreateCategoryRequest } from './request/CreateCategoryRequest';
@@ -16,13 +24,27 @@ export class CategoriesController {
   public async createCategory(
     @Body() body: CreateCategoryRequest,
   ): Promise<CreateCategoryResponse> {
-    return this.createCategoryService.execute(body);
+    try {
+      return await this.createCategoryService.execute(body);
+    } catch (error) {
+      throw new HttpException(
+        'Error creating category: ' + (error.message || 'Unknown error'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @Get()
   public async listCategories(
     @Query('name') name?: string,
   ): Promise<ListCategoriesResponse> {
-    return this.listCategoriesService.execute({ name });
+    try {
+      return await this.listCategoriesService.execute({ name });
+    } catch (error) {
+      throw new HttpException(
+        'Error fetching categories: ' + (error.message || 'Unknown error'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
