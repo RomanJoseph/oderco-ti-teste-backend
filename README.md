@@ -14,6 +14,7 @@ Para rodar o projeto, siga os passos abaixo:
 
 ```bash
 docker compose up -d
+```
 
 ## Considerações
 
