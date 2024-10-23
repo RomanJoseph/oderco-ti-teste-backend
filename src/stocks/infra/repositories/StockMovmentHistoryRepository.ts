@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Category, Prisma, Product, StockMovmentHistory } from '@prisma/client';
 import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
+import { StockMovementHistoryWithProductAndCategories } from 'src/infra/prisma/types/StockMovementHistoryWithProductAndCategories';
 import { CreateStockMovementHistoryDTO } from 'src/stocks/dto/CreateStockMovementHistoryDTO';
-
-export type StockMovementHistoryWithProductAndCategories = StockMovmentHistory & {
-  product: Product & { categories: Category[] };
-}
 
 @Injectable()
 export class StockMovmentHistoryRepository {

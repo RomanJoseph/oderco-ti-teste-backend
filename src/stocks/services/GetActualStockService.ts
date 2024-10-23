@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryDTO } from 'src/categories/dtos/CategoryDTO';
-import { StockMovementHistoryWithProductAndCategories, StockMovmentHistoryRepository } from '../infra/repositories/StockMovmentHistoryRepository';
+import { StockMovmentHistoryRepository } from '../infra/repositories/StockMovmentHistoryRepository';
+import { StockMovementHistoryWithProductAndCategories } from 'src/infra/prisma/types/StockMovementHistoryWithProductAndCategories';
+import { Category } from '@prisma/client';
 
 type GetActualStockServiceCommand = {
   categoryId?: string;
@@ -37,7 +38,7 @@ export class GetActualStockService {
         const productName = stock.product.name
         const productCategories =
           stock.product?.categories?.map(
-            (category: CategoryDTO) => category.id,
+            (category: Category) => category.id,
           ) || [];
 
         if (!acc[productName]) {

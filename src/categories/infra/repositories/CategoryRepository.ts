@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
-import { CategoryDTO } from 'src/categories/dtos/CategoryDTO';
 import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
 
 @Injectable()
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaProvider) {}
 
-  public async create(name: string): Promise<CategoryDTO> {
+  public async create(name: string): Promise<Category> {
     return this.prisma.category.create({
       data: {
         name,
@@ -23,7 +22,7 @@ export class CategoryRepository {
     });
   }
 
-  public async findAll(name?: string): Promise<CategoryDTO[]> {
+  public async findAll(name?: string): Promise<Category[]> {
     return this.prisma.category.findMany({
       where: {
         ...(name ? { name: { contains: name, mode: 'insensitive' } } : {})

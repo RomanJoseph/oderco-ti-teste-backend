@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { PrismaProvider } from 'src/infra/prisma/provider/PrismaProvider';
+import { ProductWithCategories } from 'src/infra/prisma/types/ProductWithCategories';
 import { CreateProductDTO } from 'src/products/dtos/CreateProductDTO';
-import { ProductDTO } from 'src/products/dtos/ProductDTO';
 
 @Injectable()
 export class ProductRepository {
@@ -11,7 +11,7 @@ export class ProductRepository {
   public async create(
     dto: CreateProductDTO,
     prismaTransaction?: Prisma.TransactionClient,
-  ): Promise<ProductDTO> {
+  ): Promise<ProductWithCategories> {
     const prismaClient = prismaTransaction || this.prisma;
 
     return prismaClient.product.create({
@@ -28,19 +28,22 @@ export class ProductRepository {
     });
   }
 
-  public async findById(id: string): Promise<ProductDTO | null> {
+  public async findById(id: string): Promise<ProductWithCategories | null> {
     return this.prisma.product.findUnique({
       where: {
         id,
         deletedAt: null,
       },
+      include: {
+        categories: true,
+      }
     });
   }
 
   public async findAll(
     categoryId?: string,
     name?: string,
-  ): Promise<ProductDTO[]> {
+  ): Promise<ProductWithCategories[]> {
     return this.prisma.product.findMany({
       where: {
         deletedAt: null,
@@ -55,7 +58,7 @@ export class ProductRepository {
   public async update(
     id: string,
     data: Partial<CreateProductDTO>,
-  ): Promise<ProductDTO> {
+  ): Promise<Product> {
     return this.prisma.product.update({
       where: {
         id,

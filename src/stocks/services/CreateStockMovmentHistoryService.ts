@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { StockMovmentHistoryRepository } from '../infra/repositories/StockMovmentHistoryRepository';
 
 type CreateStockMovmentHistoryCommand = {
@@ -32,6 +32,6 @@ export class CreateStockMovmentHistoryService {
       });
     };
 
-    throw new Error('Invalid stock movement! You cannot exit more than you have!');
+    throw new BadRequestException('Invalid stock movement! You cannot exit more than you have!');
   }
 }
