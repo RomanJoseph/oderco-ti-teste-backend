@@ -36,3 +36,11 @@ Caso a quantidade de oprações no banco crescesse de maneira significativa, a n
 O design de código buscou seguir DDD, onde, para este caso, cada tabela teria o Módulo (ou domínio), mas dado que não existem regras de negócio além das relacionadas a entrada e saída de estoque, e validação de nomes, não é necesário criar uma camada de domínio para isolar apenas as regras de negócio.
 
 Ademais, a API está organizada em Controllers ( que seriam as portas da aplicação ), Services, que usam os recursos de infraestrutura para executar as regras de negócio, e Infra, onde ficam isolados as implementações de bibliotecas, como a ORM e os arquivos de módulos do NestJS.
+
+## Deploy
+
+O projeto está disponível no seguinte link:
+
+[https://oderco-ti.radiants.com.br/api](https://oderco-ti.radiants.com.br/api)
+
+O deploy foi feito na SaveInCloud.

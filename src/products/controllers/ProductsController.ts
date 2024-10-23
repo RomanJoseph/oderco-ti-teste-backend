@@ -123,6 +123,7 @@ export class ProductsController {
         categories: body.categories,
       });
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         'Error updating product: ' + (error.message || 'Unknown error'),
         HttpStatus.BAD_REQUEST,
